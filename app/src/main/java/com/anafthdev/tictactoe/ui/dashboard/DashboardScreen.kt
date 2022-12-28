@@ -74,7 +74,7 @@ fun DashboardScreen(navController: NavController) {
 		
 		OutlinedButton(
 			onClick = {
-//				navController.navigate(TicTacToeDestination.Game.Home.createRoute())
+				navController.navigate(TicTacToeDestination.Game.Home.route)
 			}
 		) {
 			Text("Play")
