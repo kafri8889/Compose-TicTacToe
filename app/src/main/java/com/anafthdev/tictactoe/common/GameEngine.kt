@@ -48,12 +48,12 @@ class GameEngine(
 	}
 	
 	private fun checkVertical(board: List<PointType>): WinType {
-		for (i in 0 until 7 step 3) {
+		for (i in 0 until 3) {
 			when {
-				board[i] == PointType.O && board[i + 1] == PointType.O && board[i + 2] == PointType.O -> {
+				board[i] == PointType.O && board[i + 3] == PointType.O && board[i + 6] == PointType.O -> {
 					return WinType.O
 				}
-				board[i] == PointType.X && board[i + 1] == PointType.X && board[i + 2] == PointType.X -> {
+				board[i] == PointType.X && board[i + 3] == PointType.X && board[i + 6] == PointType.X -> {
 					return WinType.X
 				}
 			}
@@ -81,7 +81,7 @@ class GameEngine(
 		return WinType.None
 	}
 	
-	fun checkWin() {
+	private fun checkWin() {
 		val board = board.value
 		
 		val wins = listOf(checkDiagonal(board), checkVertical(board), checkDiagonal(board))
@@ -104,6 +104,8 @@ class GameEngine(
 				set(index, newPointType)
 			}
 		)
+		
+		checkWin()
 		
 		currentTurn = if (currentTurn == TurnType.PlayerOne) TurnType.PlayerTwo else TurnType.PlayerOne
 	}
