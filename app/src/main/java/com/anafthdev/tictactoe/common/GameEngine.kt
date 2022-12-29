@@ -86,9 +86,11 @@ class GameEngine(
 		
 		val wins = listOf(checkHorizontal(board), checkVertical(board), checkDiagonal(board))
 		
+		val isTie = wins.all { it == WinType.None } and board.all { it != PointType.Empty }
+		
 		listener?.onWin(
 			when {
-				WinType.Tie in wins -> WinType.Tie
+				isTie -> WinType.Tie
 				WinType.O in wins -> WinType.O
 				WinType.X in wins -> WinType.X
 				else -> WinType.None
