@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anafthdev.tictactoe.common.GameEngine
 import com.anafthdev.tictactoe.data.PointType
+import com.anafthdev.tictactoe.data.TurnType
 import com.anafthdev.tictactoe.data.WinType
 import com.anafthdev.tictactoe.extension.to2DArray
 import com.anafthdev.tictactoe.model.Player
@@ -19,6 +20,9 @@ import javax.inject.Inject
 class GameViewModel @Inject constructor(): ViewModel() {
 	
 	val board = mutableStateListOf<List<PointType>>()
+	
+	var currentTurn by mutableStateOf(TurnType.PlayerOne)
+	private set
 	
 	var playerOne by mutableStateOf(Player.Player1)
 	private set
@@ -71,6 +75,12 @@ class GameViewModel @Inject constructor(): ViewModel() {
 					clear()
 					addAll(mBoard.to2DArray(3))
 				}
+			}
+		}
+		
+		viewModelScope.launch {
+			gameEngine.currentTurn.collect { turn ->
+				currentTurn = turn
 			}
 		}
 	}

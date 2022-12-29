@@ -1,5 +1,7 @@
 package com.anafthdev.tictactoe.uicomponent
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -9,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -17,12 +20,20 @@ import androidx.compose.ui.unit.dp
 import com.anafthdev.tictactoe.R
 import com.anafthdev.tictactoe.data.PointType
 import com.anafthdev.tictactoe.model.Player
+import com.anafthdev.tictactoe.theme.light_onFlirtContainer
 
 @Composable
 fun PlayerItem(
 	player: Player,
+	playerTurn: Boolean,
 	modifier: Modifier = Modifier
 ) {
+	
+	val pointTypeBackground by animateColorAsState(
+		targetValue = if (playerTurn) light_onFlirtContainer
+		else MaterialTheme.colorScheme.background,
+		animationSpec = tween(500)
+	)
 
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally
@@ -44,7 +55,7 @@ fun PlayerItem(
 				
 				Surface(
 					shape = MaterialTheme.shapes.large,
-					color = MaterialTheme.colorScheme.background
+					color = pointTypeBackground
 				) {
 					Image(
 						painter = painterResource(

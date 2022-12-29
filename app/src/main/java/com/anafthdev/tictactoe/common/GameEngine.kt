@@ -30,7 +30,8 @@ class GameEngine(
 	
 	private var listener: Listener? = null
 	
-	private var currentTurn = TurnType.PlayerOne
+	private val _currentTurn = MutableStateFlow(TurnType.PlayerOne)
+	val currentTurn: StateFlow<TurnType> = _currentTurn.asStateFlow()
 	
 	private fun checkHorizontal(board: List<PointType>): WinType {
 		for (i in 0 until 3) {
@@ -99,7 +100,7 @@ class GameEngine(
 	}
 	
 	suspend fun updateBoard(index: Int) {
-		val newPointType = if (currentTurn == TurnType.PlayerOne) playerOne.pointType else playerTwo.pointType
+		val newPointType = if (currentTurn.value == TurnType.PlayerOne) playerOne.pointType else playerTwo.pointType
 		
 		_board.emit(
 			ArrayList(board.value).apply {
@@ -109,7 +110,9 @@ class GameEngine(
 		
 		checkWin()
 		
-		currentTurn = if (currentTurn == TurnType.PlayerOne) TurnType.PlayerTwo else TurnType.PlayerOne
+		_currentTurn.emit(
+			if (currentTurn.value == TurnType.PlayerOne) TurnType.PlayerTwo else TurnType.PlayerOne
+		)
 	}
 	
 	fun setListener(l: Listener) {

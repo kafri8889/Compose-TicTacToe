@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.anafthdev.tictactoe.data.TurnType
 import com.anafthdev.tictactoe.extension.toast
 import com.anafthdev.tictactoe.uicomponent.PlayerItem
 import com.anafthdev.tictactoe.uicomponent.RoundItem
@@ -40,7 +41,8 @@ fun GameScreen(
 				.fillMaxWidth()
 		) {
 			PlayerItem(
-				player = viewModel.playerOne
+				player = viewModel.playerOne,
+				playerTurn = viewModel.currentTurn == TurnType.PlayerOne
 			)
 			
 			RoundItem(
@@ -49,7 +51,8 @@ fun GameScreen(
 			)
 			
 			PlayerItem(
-				player = viewModel.playerTwo
+				player = viewModel.playerTwo,
+				playerTurn = viewModel.currentTurn == TurnType.PlayerTwo
 			)
 		}
 		

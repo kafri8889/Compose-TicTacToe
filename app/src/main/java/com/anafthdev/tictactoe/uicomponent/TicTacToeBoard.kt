@@ -1,5 +1,10 @@
 package com.anafthdev.tictactoe.uicomponent
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +20,7 @@ import androidx.compose.ui.zIndex
 import com.anafthdev.tictactoe.R
 import com.anafthdev.tictactoe.data.PointType
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TicTacToeBoard(
 	board: List<List<PointType>>,
@@ -56,19 +62,31 @@ fun TicTacToeBoard(
 							}
 						}
 				) {
-					Image(
-						painter = painterResource(
-							id = when (pointType) {
-								PointType.Empty -> R.drawable.transparent
-								PointType.X -> R.drawable.ic_tic_tac_toe_x
-								PointType.O -> R.drawable.ic_tic_tac_toe_o
-							}
+					AnimatedVisibility(
+						visible = pointType != PointType.Empty,
+						enter = scaleIn(
+							animationSpec = tween(200)
 						),
-						contentDescription = null,
+						exit = scaleOut(
+							animationSpec = tween(200)
+						),
 						modifier = Modifier
 							.padding(8.dp)
 							.matchParentSize()
-					)
+					) {
+						Image(
+							painter = painterResource(
+								id = when (pointType) {
+									PointType.Empty -> R.drawable.transparent
+									PointType.X -> R.drawable.ic_tic_tac_toe_x
+									PointType.O -> R.drawable.ic_tic_tac_toe_o
+								}
+							),
+							contentDescription = null,
+							modifier = Modifier
+								.matchParentSize()
+						)
+					}
 				}
 			}
 		}
