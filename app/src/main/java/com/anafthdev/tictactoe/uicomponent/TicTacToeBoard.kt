@@ -15,6 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.anafthdev.tictactoe.R
@@ -28,9 +31,12 @@ fun TicTacToeBoard(
 	onClick: (row: Int, col: Int) -> Unit
 ) {
 	
+	val dividerWidth = remember { 8.dp }
+	
 	BoxWithConstraints(modifier = modifier) {
-		val dividerWidth = 8.dp
-		val tileSize = (maxWidth / 3) - dividerWidth / 1.5f
+		val tileSize = remember(maxWidth, dividerWidth) {
+			(maxWidth / 3) - dividerWidth / 1.5f
+		}
 		
 		for ((row, pointTypeRow) in board.withIndex()) {
 			for ((col, pointType) in pointTypeRow.withIndex()) {
@@ -74,17 +80,8 @@ fun TicTacToeBoard(
 							.padding(8.dp)
 							.matchParentSize()
 					) {
-						Image(
-							painter = painterResource(
-								id = when (pointType) {
-									PointType.Empty -> R.drawable.transparent
-									PointType.X -> R.drawable.ic_tic_tac_toe_x
-									PointType.O -> R.drawable.ic_tic_tac_toe_o
-								}
-							),
-							contentDescription = null,
-							modifier = Modifier
-								.matchParentSize()
+						PointTypeImage(
+							pointType = pointType
 						)
 					}
 				}
@@ -99,28 +96,78 @@ fun TicTacToeBoard(
 				}
 			}
 			
-			Divider(
-				thickness = dividerWidth,
-				modifier = Modifier
-					.offset(
-						x = tileSize * (i + 1) + padding,
+			BoardDivider(
+				maxHeight = maxHeight,
+				dividerThickness = { dividerWidth },
+				offsetVert = {
+					IntOffset(
+						x = (tileSize * (i + 1) + padding)
+							.toPx()
+							.toInt(),
 						y = 0.dp
+							.toPx()
+							.toInt()
 					)
-					.size(dividerWidth, maxHeight)
-					.clip(CircleShape)
-			)
-
-			Divider(
-				thickness = dividerWidth,
-				modifier = Modifier
-					.offset(
-						x = 0.dp,
-						y = tileSize * (i + 1) + padding
+				},
+				offsetHorz = {
+					IntOffset(
+						x = 0.dp
+							.toPx()
+							.toInt(),
+						y = (tileSize * (i + 1) + padding)
+							.toPx()
+							.toInt()
 					)
-					.fillMaxWidth()
-					.height(dividerWidth)
-					.clip(CircleShape)
+				}
 			)
 		}
 	}
+}
+
+@Composable
+private fun BoardDivider(
+	maxHeight: Dp,
+	dividerThickness: () -> Dp,
+	offsetHorz: Density.() -> IntOffset,
+	offsetVert: Density.() -> IntOffset
+) {
+	
+	Divider(
+		thickness = dividerThickness(),
+		modifier = Modifier
+			.offset {
+				offsetVert()
+			}
+			.size(dividerThickness(), maxHeight)
+			.clip(CircleShape)
+	)
+	
+	Divider(
+		thickness = dividerThickness(),
+		modifier = Modifier
+			.offset {
+				offsetHorz()
+			}
+			.fillMaxWidth()
+			.height(dividerThickness())
+			.clip(CircleShape)
+	)
+}
+
+@Composable
+private fun BoxScope.PointTypeImage(
+	pointType: PointType
+) {
+	Image(
+		painter = painterResource(
+			id = when (pointType) {
+				PointType.Empty -> R.drawable.transparent
+				PointType.X -> R.drawable.ic_tic_tac_toe_x
+				PointType.O -> R.drawable.ic_tic_tac_toe_o
+			}
+		),
+		contentDescription = null,
+		modifier = Modifier
+			.matchParentSize()
+	)
 }
