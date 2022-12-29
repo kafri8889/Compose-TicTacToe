@@ -20,3 +20,16 @@ fun ColumnScope.Padding(
 	}
 }
 
+@Composable
+fun Padding(
+	all: Dp,
+	content: @Composable () -> Unit
+) {
+	Column(
+		modifier = Modifier
+			.padding(all)
+	) {
+		content()
+	}
+}
+
