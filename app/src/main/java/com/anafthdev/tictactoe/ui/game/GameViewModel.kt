@@ -92,5 +92,13 @@ class GameViewModel @Inject constructor(): ViewModel() {
 			gameEngine.updateBoard(index)
 		}
 	}
+	
+	fun clearBoard() {
+		winner = WinType.None
+		
+		viewModelScope.launch {
+			gameEngine.clearBoard()
+		}
+	}
 
 }

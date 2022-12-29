@@ -10,7 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.anafthdev.tictactoe.data.PointType
 import com.anafthdev.tictactoe.data.TurnType
+import com.anafthdev.tictactoe.data.WinType
 import com.anafthdev.tictactoe.extension.toast
 import com.anafthdev.tictactoe.uicomponent.PlayerItem
 import com.anafthdev.tictactoe.uicomponent.RoundItem
@@ -25,7 +27,20 @@ fun GameScreen(
 	val context = LocalContext.current
 	
 	LaunchedEffect(viewModel.winner) {
-		viewModel.winner.toast(context)
+		when (viewModel.winner) {
+			WinType.Tie -> "Tie".toast(context)
+			WinType.O -> {
+				if (viewModel.playerOne.pointType == PointType.O) "${viewModel.playerOne.name} win".toast(context)
+				else "${viewModel.playerTwo.name} win".toast(context)
+			}
+			WinType.X -> {
+				if (viewModel.playerOne.pointType == PointType.X) "${viewModel.playerOne.name} win".toast(context)
+				else "${viewModel.playerTwo.name} win".toast(context)
+			}
+			WinType.None -> {}
+		}
+		
+		viewModel.clearBoard()
 	}
 
 	Column(

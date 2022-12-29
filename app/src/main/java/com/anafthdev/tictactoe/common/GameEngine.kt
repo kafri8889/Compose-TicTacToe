@@ -115,6 +115,10 @@ class GameEngine(
 		)
 	}
 	
+	suspend fun clearBoard() {
+		_board.emit(defaultBoard)
+	}
+	
 	fun setListener(l: Listener) {
 		listener = l
 	}
