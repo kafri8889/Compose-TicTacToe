@@ -35,10 +35,10 @@ class GameEngine(
 	private fun checkHorizontal(board: List<PointType>): WinType {
 		for (i in 0 until 3) {
 			when {
-				board[i] == PointType.O && board[i + 3] == PointType.O && board[i + 6] == PointType.O -> {
+				board[i * 3] == PointType.O && board[(i * 3) + 1] == PointType.O && board[(i * 3) + 2] == PointType.O -> {
 					return WinType.O
 				}
-				board[i] == PointType.X && board[i + 3] == PointType.X && board[i + 6] == PointType.X -> {
+				board[i * 3] == PointType.X && board[(i * 3) + 1] == PointType.X && board[(i * 3) + 2] == PointType.X -> {
 					return WinType.X
 				}
 			}
@@ -84,7 +84,7 @@ class GameEngine(
 	private fun checkWin() {
 		val board = board.value
 		
-		val wins = listOf(checkDiagonal(board), checkVertical(board), checkDiagonal(board))
+		val wins = listOf(checkHorizontal(board), checkVertical(board), checkDiagonal(board))
 		
 		listener?.onWin(
 			when {
