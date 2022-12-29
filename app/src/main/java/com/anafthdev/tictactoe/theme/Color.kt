@@ -64,5 +64,14 @@ val md_theme_dark_surfaceTint = Color(0xFFFFB4A4)
 val md_theme_dark_outlineVariant = Color(0xFF534340)
 val md_theme_dark_scrim = Color(0xFF000000)
 
-
 val seed = Color(0xFFEF6F53)
+
+val light_flirt = Color(0xFFb4007e)
+val light_flirtContainer = Color(0xFFffd8e8)
+val light_onFlirt = Color(0xFFffffff)
+val light_onFlirtContainer = Color(0xFF3d0027)
+
+val dark_flirt = Color(0xFFffafd5)
+val dark_flirtContainer = Color(0xFF620042)
+val dark_onFlirt = Color(0xFF8a005f)
+val dark_onFlirtContainer = Color(0xFFffd8e8)
