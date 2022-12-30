@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +33,18 @@ fun DashboardScreen(
 ) {
 	
 	val context = LocalContext.current
+	
+	val playButtonEnabled = remember(viewModel.bluetoothAvailable, viewModel.selectedGameMode) {
+		if (!viewModel.bluetoothAvailable && viewModel.selectedGameMode == GameMode.PvPBluetooth) {
+			return@remember false
+		}
+		
+		return@remember true
+	}
+	
+	LaunchedEffect(context) {
+		viewModel.checkBluetooth(context)
+	}
 	
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,6 +73,7 @@ fun DashboardScreen(
 		Spacer(modifier = Modifier.padding(8.dp))
 		
 		OutlinedButton(
+			enabled = playButtonEnabled,
 			onClick = {
 				navController.navigate(
 					TicTacToeDestination.Game.Home.createRoute(
