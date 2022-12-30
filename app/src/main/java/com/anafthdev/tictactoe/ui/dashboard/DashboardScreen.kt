@@ -63,7 +63,11 @@ fun DashboardScreen(
 		
 		OutlinedButton(
 			onClick = {
-				navController.navigate(TicTacToeDestination.Game.Home.route)
+				navController.navigate(
+					TicTacToeDestination.Game.Home.createRoute(
+						gameMode = viewModel.selectedGameMode
+					)
+				)
 			}
 		) {
 			Text("Play")

@@ -22,5 +22,12 @@ data class Player(
 			name = "Player 2",
 			pointType = PointType.O
 		)
+		
+		val Computer = Player(
+			id = 2,
+			win = 0,
+			name = "Computer",
+			pointType = PointType.O
+		)
 	}
 }

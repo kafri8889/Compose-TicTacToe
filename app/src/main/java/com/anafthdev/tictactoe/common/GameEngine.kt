@@ -1,5 +1,6 @@
 package com.anafthdev.tictactoe.common
 
+import com.anafthdev.tictactoe.data.GameMode
 import com.anafthdev.tictactoe.data.PointType
 import com.anafthdev.tictactoe.data.TurnType
 import com.anafthdev.tictactoe.data.WinType
@@ -15,8 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
  * 6|7|8
  */
 class GameEngine(
-	val playerOne: Player,
-	val playerTwo: Player,
+	private var playerOne: Player,
+	private var playerTwo: Player,
 ) {
 	
 	private val defaultBoard = ArrayList<PointType>(9).apply {
@@ -28,10 +29,11 @@ class GameEngine(
 	private val _board = MutableStateFlow(defaultBoard)
 	val board: StateFlow<ArrayList<PointType>> = _board.asStateFlow()
 	
-	private var listener: Listener? = null
-	
 	private val _currentTurn = MutableStateFlow(TurnType.PlayerOne)
 	val currentTurn: StateFlow<TurnType> = _currentTurn.asStateFlow()
+	
+	private var gameMode: GameMode = GameMode.Computer
+	private var listener: Listener? = null
 	
 	private fun checkHorizontal(board: List<PointType>): WinType {
 		for (i in 0 until 3) {
@@ -82,9 +84,7 @@ class GameEngine(
 		return WinType.None
 	}
 	
-	private fun checkWin() {
-		val board = board.value
-		
+	private fun checkWin(board: List<PointType>) {
 		val wins = listOf(checkHorizontal(board), checkVertical(board), checkDiagonal(board))
 		
 		val isTie = wins.all { it == WinType.None } and board.all { it != PointType.Empty }
@@ -101,22 +101,66 @@ class GameEngine(
 	
 	suspend fun updateBoard(index: Int) {
 		val newPointType = if (currentTurn.value == TurnType.PlayerOne) playerOne.pointType else playerTwo.pointType
+		val newBoard = ArrayList(board.value).apply {
+			set(index, newPointType)
+		}
 		
-		_board.emit(
-			ArrayList(board.value).apply {
-				set(index, newPointType)
+		_board.emit(newBoard)
+		
+		checkWin(newBoard)
+		
+		val nextTurn = if (currentTurn.value == TurnType.PlayerOne) TurnType.PlayerTwo else TurnType.PlayerOne
+		
+		_currentTurn.emit(nextTurn)
+		
+		when (nextTurn) {
+			TurnType.PlayerOne -> {
+				if (playerOne.id == Player.Computer.id) {
+					computerTurn(newBoard)
+				}
 			}
-		)
+			TurnType.PlayerTwo -> {
+				if (playerTwo.id == Player.Computer.id) {
+					computerTurn(newBoard)
+				}
+			}
+		}
+	}
+	
+	private suspend fun computerTurn(board: List<PointType>) {
+		val emptyIndex = arrayListOf<Int>()
 		
-		checkWin()
+		board.forEachIndexed { i, type ->
+			if (type == PointType.Empty) emptyIndex.add(i)
+		}
 		
-		_currentTurn.emit(
-			if (currentTurn.value == TurnType.PlayerOne) TurnType.PlayerTwo else TurnType.PlayerOne
-		)
+		if (emptyIndex.isNotEmpty()) {
+			val randomIndex = emptyIndex.random()
+			
+			updateBoard(randomIndex)
+		}
 	}
 	
 	suspend fun clearBoard() {
 		_board.emit(defaultBoard)
+		
+		when (currentTurn.value) {
+			TurnType.PlayerOne -> {
+				if (playerOne.id == Player.Computer.id) {
+					computerTurn(defaultBoard)
+				}
+			}
+			TurnType.PlayerTwo -> {
+				if (playerTwo.id == Player.Computer.id) {
+					computerTurn(defaultBoard)
+				}
+			}
+		}
+	}
+	
+	fun updatePlayer(one: Player, two: Player) {
+		playerOne = one
+		playerTwo = two
 	}
 	
 	fun setListener(l: Listener) {

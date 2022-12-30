@@ -20,6 +20,7 @@ fun NavGraphBuilder.GameAnimatedNavHost(navController: NavController) {
 	) {
 		composable(
 			route = TicTacToeDestination.Game.Home.route,
+			arguments = TicTacToeDestination.Game.Home.arguments,
 			enterTransition = { fadeIn() },
 			exitTransition = { fadeOut() },
 			popEnterTransition = { fadeIn() },

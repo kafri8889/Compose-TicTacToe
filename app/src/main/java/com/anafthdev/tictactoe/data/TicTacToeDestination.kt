@@ -1,5 +1,8 @@
 package com.anafthdev.tictactoe.data
 
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 sealed class TicTacToeDestination(val route: String) {
 
 	class Dashboard {
@@ -14,7 +17,23 @@ sealed class TicTacToeDestination(val route: String) {
 	
 	class Game {
 		object Root: TicTacToeDestination("game/root")
-		object Home: TicTacToeDestination("game/home")
+		object Home: TicTacToeDestination(
+			route = "game/home?" +
+					"$ARG_GAME_MODE={$ARG_GAME_MODE}"
+		) {
+			fun createRoute(gameMode: GameMode): String {
+				return "game/home?" +
+						"$ARG_GAME_MODE=${gameMode.ordinal}"
+			}
+			
+			val arguments = listOf(
+				navArgument(ARG_GAME_MODE) {
+					type = NavType.IntType
+				}
+			)
+		}
 	}
 
 }
+
+const val ARG_GAME_MODE = "game_mode"

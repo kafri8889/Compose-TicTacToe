@@ -4,12 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anafthdev.tictactoe.common.GameEngine
-import com.anafthdev.tictactoe.data.PointType
-import com.anafthdev.tictactoe.data.TurnType
-import com.anafthdev.tictactoe.data.WinType
+import com.anafthdev.tictactoe.data.*
 import com.anafthdev.tictactoe.extension.to2DArray
 import com.anafthdev.tictactoe.model.Player
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +16,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GameViewModel @Inject constructor(): ViewModel() {
+class GameViewModel @Inject constructor(
+	savedStateHandle: SavedStateHandle
+): ViewModel() {
 	
 	val board = mutableStateListOf<List<PointType>>()
 	
@@ -28,6 +29,9 @@ class GameViewModel @Inject constructor(): ViewModel() {
 	private set
 	
 	var playerTwo by mutableStateOf(Player.Player2)
+	private set
+	
+	var gameMode by mutableStateOf(GameMode.Computer)
 	private set
 	
 	var winner by mutableStateOf(WinType.None)
@@ -43,6 +47,8 @@ class GameViewModel @Inject constructor(): ViewModel() {
 		playerOne = playerOne,
 		playerTwo = playerTwo
 	)
+	
+	private val _gameMode = savedStateHandle.getStateFlow(ARG_GAME_MODE, 0)
 	
 	init {
 		gameEngine.setListener(object : GameEngine.Listener {
@@ -81,6 +87,31 @@ class GameViewModel @Inject constructor(): ViewModel() {
 		viewModelScope.launch {
 			gameEngine.currentTurn.collect { turn ->
 				currentTurn = turn
+			}
+		}
+		
+		viewModelScope.launch {
+			_gameMode.collect { ordinal ->
+				val mode = GameMode.values()[ordinal]
+				
+				gameMode = mode
+				
+				when (mode) {
+					GameMode.Computer -> {
+						playerOne = Player.Player1
+						playerTwo = Player.Computer
+					}
+					GameMode.PvP -> {
+						playerOne = Player.Player1
+						playerTwo = Player.Player2
+					}
+					GameMode.PvPBluetooth -> {}
+				}
+				
+				gameEngine.updatePlayer(
+					one = playerOne,
+					two = playerTwo
+				)
 			}
 		}
 	}
