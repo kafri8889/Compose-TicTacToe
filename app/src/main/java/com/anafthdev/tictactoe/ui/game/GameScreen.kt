@@ -45,6 +45,7 @@ fun GameScreen(
 
 	Column(
 		modifier = Modifier
+			.systemBarsPadding()
 			.fillMaxSize()
 			.background(MaterialTheme.colorScheme.surface)
 	) {
