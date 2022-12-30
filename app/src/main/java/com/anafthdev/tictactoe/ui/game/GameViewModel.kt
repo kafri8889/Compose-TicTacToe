@@ -72,6 +72,10 @@ class GameViewModel @Inject constructor(
 						draw += 1
 					}
 				}
+				
+				if (winner != WinType.None) {
+					round++
+				}
 			}
 		})
 		
