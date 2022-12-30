@@ -22,38 +22,17 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.anafthdev.tictactoe.R
+import com.anafthdev.tictactoe.data.GameMode
 import com.anafthdev.tictactoe.data.TicTacToeDestination
+import com.anafthdev.tictactoe.uicomponent.GameModeSelector
 
 @Composable
-fun DashboardScreen(navController: NavController) {
+fun DashboardScreen(
+	navController: NavController,
+	viewModel: DashboardViewModel
+) {
 	
 	val context = LocalContext.current
-	
-	val openSourceProjectMsg = buildAnnotatedString {
-		withStyle(
-			style = LocalTextStyle.current.copy(
-				textAlign = TextAlign.Center,
-				fontWeight = FontWeight.Light
-			).toSpanStyle()
-		) {
-			append("This is an open source project, source code can be found on ")
-			
-			pushStringAnnotation(tag = "github", annotation = "https://google.com/policy")
-			
-			withStyle(
-				style = SpanStyle(
-					color = MaterialTheme.colorScheme.primary,
-					fontWeight = FontWeight.Medium
-				)
-			) {
-				append("GitHub")
-			}
-			
-			pop()
-			
-			append(" or by clicking on the GitHub icon above")
-		}
-	}
 	
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,6 +47,16 @@ fun DashboardScreen(navController: NavController) {
 			modifier = Modifier
 				.size(96.dp)
 				.clip(MaterialTheme.shapes.large)
+		)
+		
+		Spacer(modifier = Modifier.padding(8.dp))
+		
+		GameModeSelector(
+			gameModes = GameMode.values(),
+			selectedGameMode = viewModel.selectedGameMode,
+			onGameModeChanged = viewModel::updateGameMode,
+			modifier = Modifier
+				.fillMaxWidth(0.6f)
 		)
 		
 		Spacer(modifier = Modifier.padding(8.dp))
@@ -115,36 +104,70 @@ fun DashboardScreen(navController: NavController) {
 		
 		Spacer(modifier = Modifier.padding(16.dp))
 		
-		Text(
-			text = "Open Source",
-			style = MaterialTheme.typography.titleLarge.copy(
-				fontWeight = FontWeight.Light
-			)
-		)
-		
-		Spacer(modifier = Modifier.padding(8.dp))
-		
-		ClickableText(
-			text = openSourceProjectMsg,
-			style = LocalTextStyle.current.copy(
-				textAlign = TextAlign.Center
-			),
-			onClick = { offset ->
-				openSourceProjectMsg.getStringAnnotations(
-					tag = "github",
-					start = offset,
-					end = offset
-				).firstOrNull()?.let { _ ->
-					context.startActivity(
-						Intent(Intent.ACTION_VIEW).apply {
-							flags = Intent.FLAG_ACTIVITY_NEW_TASK
-							data = Uri.parse("https://github.com/kafri8889/Compose-Classic-Snake-Game")
-						}
-					)
-				}
-			},
-			modifier = Modifier
-				.fillMaxWidth(0.7f)
-		)
+		OpenSourceText()
 	}
+}
+
+@Composable
+fun OpenSourceText() {
+	
+	val context = LocalContext.current
+	
+	val openSourceProjectMsg = buildAnnotatedString {
+		withStyle(
+			style = LocalTextStyle.current.copy(
+				textAlign = TextAlign.Center,
+				fontWeight = FontWeight.Light
+			).toSpanStyle()
+		) {
+			append("This is an open source project, source code can be found on ")
+			
+			pushStringAnnotation(tag = "github", annotation = "https://google.com/policy")
+			
+			withStyle(
+				style = SpanStyle(
+					color = MaterialTheme.colorScheme.primary,
+					fontWeight = FontWeight.Medium
+				)
+			) {
+				append("GitHub")
+			}
+			
+			pop()
+			
+			append(" or by clicking on the GitHub icon above")
+		}
+	}
+	
+	Text(
+		text = "Open Source",
+		style = MaterialTheme.typography.titleLarge.copy(
+			fontWeight = FontWeight.Light
+		)
+	)
+	
+	Spacer(modifier = Modifier.padding(8.dp))
+	
+	ClickableText(
+		text = openSourceProjectMsg,
+		style = LocalTextStyle.current.copy(
+			textAlign = TextAlign.Center
+		),
+		onClick = { offset ->
+			openSourceProjectMsg.getStringAnnotations(
+				tag = "github",
+				start = offset,
+				end = offset
+			).firstOrNull()?.let { _ ->
+				context.startActivity(
+					Intent(Intent.ACTION_VIEW).apply {
+						flags = Intent.FLAG_ACTIVITY_NEW_TASK
+						data = Uri.parse("https://github.com/kafri8889/Compose-Classic-Snake-Game")
+					}
+				)
+			}
+		},
+		modifier = Modifier
+			.fillMaxWidth(0.7f)
+	)
 }

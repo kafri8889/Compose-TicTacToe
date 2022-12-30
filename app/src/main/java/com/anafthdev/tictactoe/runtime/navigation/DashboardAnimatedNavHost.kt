@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.anafthdev.tictactoe.data.TicTacToeDestination
 import com.anafthdev.tictactoe.ui.dashboard.DashboardScreen
+import com.anafthdev.tictactoe.ui.dashboard.DashboardViewModel
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 
@@ -23,9 +24,12 @@ fun NavGraphBuilder.DashboardAnimatedNavHost(navController: NavController) {
 			exitTransition = { fadeOut() },
 			popEnterTransition = { fadeIn() },
 			popExitTransition = { fadeOut() }
-		) {
+		) { backEntry ->
+			val viewModel = hiltViewModel<DashboardViewModel>(backEntry)
+			
 			DashboardScreen(
-				navController = navController
+				navController = navController,
+				viewModel = viewModel
 			)
 		}
 	}
