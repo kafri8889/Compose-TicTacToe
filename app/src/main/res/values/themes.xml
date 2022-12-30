@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.TicTacToe" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.TicTacToe" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_drawable</item>
+        <item name="android:statusBarColor">@color/ic_launcher_background</item>
+    </style>
+
 </resources>
