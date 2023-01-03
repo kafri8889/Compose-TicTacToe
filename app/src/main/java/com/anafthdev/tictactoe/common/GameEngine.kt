@@ -8,6 +8,7 @@ import com.anafthdev.tictactoe.model.Player
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import timber.log.Timber
 
 /**
  * Board
@@ -84,19 +85,21 @@ class GameEngine(
 		return WinType.None
 	}
 	
-	private fun checkWin(board: List<PointType>) {
+	private fun checkWin(board: List<PointType>): WinType {
 		val wins = listOf(checkHorizontal(board), checkVertical(board), checkDiagonal(board))
-		
+		Timber.i("fingsbuk: kolll")
 		val isTie = wins.all { it == WinType.None } and board.all { it != PointType.Empty }
 		
-		listener?.onWin(
-			when {
-				isTie -> WinType.Tie
-				WinType.O in wins -> WinType.O
-				WinType.X in wins -> WinType.X
-				else -> WinType.None
-			}
-		)
+		val winner = when {
+			isTie -> WinType.Tie
+			WinType.O in wins -> WinType.O
+			WinType.X in wins -> WinType.X
+			else -> WinType.None
+		}
+		
+		listener?.onWin(winner)
+		
+		return winner
 	}
 	
 	suspend fun updateBoard(index: Int) {
@@ -107,21 +110,23 @@ class GameEngine(
 		
 		_board.emit(newBoard)
 		
-		checkWin(newBoard)
+		val winner = checkWin(newBoard)
 		
 		val nextTurn = if (currentTurn.value == TurnType.PlayerOne) TurnType.PlayerTwo else TurnType.PlayerOne
 		
 		_currentTurn.emit(nextTurn)
 		
-		when (nextTurn) {
-			TurnType.PlayerOne -> {
-				if (playerOne.id == Player.Computer.id) {
-					computerTurn(newBoard)
+		if (winner == WinType.None) {
+			when (nextTurn) {
+				TurnType.PlayerOne -> {
+					if (playerOne.id == Player.Computer.id) {
+						computerTurn(newBoard)
+					}
 				}
-			}
-			TurnType.PlayerTwo -> {
-				if (playerTwo.id == Player.Computer.id) {
-					computerTurn(newBoard)
+				TurnType.PlayerTwo -> {
+					if (playerTwo.id == Player.Computer.id) {
+						computerTurn(newBoard)
+					}
 				}
 			}
 		}
