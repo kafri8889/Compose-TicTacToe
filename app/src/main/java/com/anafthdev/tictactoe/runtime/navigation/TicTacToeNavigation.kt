@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.compose.rememberNavController
 import com.anafthdev.tictactoe.data.TicTacToeDestination
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -35,6 +34,8 @@ fun TicTacToeNavigation() {
 		DashboardAnimatedNavHost(navController)
 		
 		ScoreAnimatedNavHost(navController)
+		
+		PvPBluetoothAnimatedNavHost(navController)
 		
 		GameAnimatedNavHost(navController)
 	}

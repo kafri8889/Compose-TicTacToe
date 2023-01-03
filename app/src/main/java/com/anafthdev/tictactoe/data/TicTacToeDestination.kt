@@ -15,6 +15,11 @@ sealed class TicTacToeDestination(val route: String) {
 		object Home: TicTacToeDestination("score/home")
 	}
 	
+	class PvPBluetooth {
+		object Root: TicTacToeDestination("pvp_bluetooth/root")
+		object Home: TicTacToeDestination("pvp_bluetooth/home")
+	}
+	
 	class Game {
 		object Root: TicTacToeDestination("game/root")
 		object Home: TicTacToeDestination(

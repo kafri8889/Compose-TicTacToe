@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.anafthdev.tictactoe.R
 import com.anafthdev.tictactoe.data.GameMode
 import com.anafthdev.tictactoe.data.TicTacToeDestination
+import com.anafthdev.tictactoe.runtime.MainActivity
 import com.anafthdev.tictactoe.uicomponent.GameModeSelector
 
 @Composable
@@ -75,11 +76,19 @@ fun DashboardScreen(
 		OutlinedButton(
 			enabled = playButtonEnabled,
 			onClick = {
-				navController.navigate(
-					TicTacToeDestination.Game.Home.createRoute(
-						gameMode = viewModel.selectedGameMode
+				if (viewModel.selectedGameMode == GameMode.PvPBluetooth) {
+					if ((context as MainActivity).checkPermission()) {
+						navController.navigate(
+							TicTacToeDestination.PvPBluetooth.Home.route
+						)
+					} else context.requestPermission()
+				} else {
+					navController.navigate(
+						TicTacToeDestination.Game.Home.createRoute(
+							gameMode = viewModel.selectedGameMode
+						)
 					)
-				)
+				}
 			}
 		) {
 			Text("Play")
