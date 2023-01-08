@@ -8,7 +8,6 @@ import com.anafthdev.tictactoe.model.Player
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import timber.log.Timber
 
 /**
  * Board
@@ -20,6 +19,8 @@ class GameEngine(
 	private var playerOne: Player,
 	private var playerTwo: Player,
 ) {
+	
+	private val minimax = Minimax(this)
 	
 	private val defaultBoard = ArrayList<PointType>(9).apply {
 		repeat(9) { i ->
@@ -85,9 +86,9 @@ class GameEngine(
 		return WinType.None
 	}
 	
-	private fun checkWin(board: List<PointType>): WinType {
+	fun checkWin(board: List<PointType>, invokeListener: Boolean = true): WinType {
 		val wins = listOf(checkHorizontal(board), checkVertical(board), checkDiagonal(board))
-		Timber.i("fingsbuk: kolll")
+//		Timber.i("fingsbuk: kolll")
 		val isTie = wins.all { it == WinType.None } and board.all { it != PointType.Empty }
 		
 		val winner = when {
@@ -97,7 +98,9 @@ class GameEngine(
 			else -> WinType.None
 		}
 		
-		listener?.onWin(winner)
+		if (invokeListener) {
+			listener?.onWin(winner)
+		}
 		
 		return winner
 	}
@@ -140,9 +143,10 @@ class GameEngine(
 		}
 		
 		if (emptyIndex.isNotEmpty()) {
-			val randomIndex = emptyIndex.random()
+			val nextIndex = minimax.getBestMove(board, playerTwo, playerOne)
+//			val randomIndex = emptyIndex.random()
 			
-			updateBoard(randomIndex)
+			updateBoard(nextIndex)
 		}
 	}
 	
